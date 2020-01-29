@@ -10,5 +10,8 @@ find_package(GTest)
 add_library(primes_lib STATIC lib/include/primes.h
                               lib/src/primes.cpp)
 
+add_executable(primes-cli src/main.cpp)
+target_link_libraries(primes-cli PRIVATE primes_lib)
+
 add_executable(test gtest/main.cpp)
 target_link_libraries(test PRIVATE primes_lib GTest::GTest)
