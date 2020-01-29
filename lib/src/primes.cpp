@@ -131,3 +131,40 @@ uint32_t PrimesCache::size() const noexcept {
   return static_cast<uint32_t>(data_.size());
 }
 
+Primes::Primes() : size_{0}, unbound_{true} {}
+
+Primes::Primes(uint32_t max_value) : size_{0}, unbound_{false} {
+  while (data_.last_checked() < max_value) {
+    data_.add_primes();
+  }
+  auto end = std::upper_bound(data_.begin(), data_.end(), max_value);
+  size_ = static_cast<uint32_t>(end - data_.begin());
+}
+
+uint32_t Primes::operator[](uint32_t pos) {
+  if (unbound_ || size_ > pos) {
+    return data_[pos];
+  }
+#ifdef DEBUG_MODE
+  std::cout << "Out of bounds in Primes: operator[](" << pos << ')'
+            << std::endl;
+#endif
+  return 0;
+}
+
+uint32_t Primes::operator()(uint32_t pos) const noexcept {
+  if (unbound_ || size_ > pos) {
+    return data_(pos);
+  }
+#ifdef DEBUG_MODE
+  std::cout << "Out of bounds in Primes: operator()(" << pos << ')'
+            << std::endl;
+#endif
+  return 0;
+}
+
+uint32_t Primes::size() const noexcept {
+  return unbound_ ? data_.size() : size_;
+}
+
+
