@@ -167,4 +167,116 @@ uint32_t Primes::size() const noexcept {
   return unbound_ ? data_.size() : size_;
 }
 
+Primes::Iterator::Iterator(Primes *owner, uint32_t pos, bool end_it) noexcept
+    : owner_{owner}, pos_{pos}, end_it_{end_it} {}
 
+Primes::Iterator Primes::begin() { return Iterator(this); }
+
+Primes::Iterator Primes::end() { return Iterator(this, size_, unbound_); }
+
+Primes::Iterator &
+Primes::Iterator::operator+=(Primes::Iterator::difference_type diff) noexcept {
+  if (diff < 0) {
+    pos_ -= static_cast<uint32_t>(-diff);
+  } else {
+    pos_ += static_cast<uint32_t>(diff);
+  }
+  return *this;
+}
+
+Primes::Iterator &
+Primes::Iterator::operator-=(Primes::Iterator::difference_type diff) noexcept {
+  return *this += -diff;
+}
+
+Primes::Iterator operator+(const Primes::Iterator &it,
+                           Primes::Iterator::difference_type diff) noexcept {
+  return Primes::Iterator(it) += diff;
+}
+
+Primes::Iterator operator-(const Primes::Iterator &it,
+                           Primes::Iterator::difference_type diff) noexcept {
+  return Primes::Iterator(it) -= diff;
+}
+
+Primes::Iterator operator+(Primes::Iterator::difference_type diff,
+                           const Primes::Iterator &it) noexcept {
+  return it + diff;
+}
+
+Primes::Iterator::difference_type
+operator-(const Primes::Iterator &lhs, const Primes::Iterator &rhs) noexcept {
+  if (lhs.end_it_ && rhs.end_it_) {
+    return 0;
+  }
+  if (lhs.end_it_ || rhs.end_it_) {
+    return lhs.end_it_ ? INT32_MAX : INT32_MIN;
+  }
+  return lhs.pos_ >= rhs.pos_ ? static_cast<Primes::Iterator::difference_type>(
+                                    lhs.pos_ - rhs.pos_)
+                              : -static_cast<Primes::Iterator::difference_type>(
+                                    rhs.pos_ - lhs.pos_);
+}
+
+bool operator==(const Primes::Iterator &lhs,
+                const Primes::Iterator &rhs) noexcept {
+  return (lhs.end_it_ || rhs.end_it_) ? (lhs.end_it_ && rhs.end_it_)
+                                      : lhs.pos_ == rhs.pos_;
+}
+
+bool operator!=(const Primes::Iterator &lhs,
+                const Primes::Iterator &rhs) noexcept {
+  return !(lhs == rhs);
+}
+
+bool operator<(const Primes::Iterator &lhs,
+               const Primes::Iterator &rhs) noexcept {
+  if (lhs.end_it_ && rhs.end_it_) {
+    return false;
+  }
+  if (lhs.end_it_ || rhs.end_it_) {
+    return rhs.end_it_;
+  }
+  return lhs.pos_ < rhs.pos_;
+}
+
+bool operator>(const Primes::Iterator &lhs,
+               const Primes::Iterator &rhs) noexcept {
+  return rhs < lhs;
+}
+
+bool operator>=(const Primes::Iterator &lhs,
+                const Primes::Iterator &rhs) noexcept {
+  return !(lhs < rhs);
+}
+
+bool operator<=(const Primes::Iterator &lhs,
+                const Primes::Iterator &rhs) noexcept {
+  return !(lhs > rhs);
+}
+
+Primes::Iterator &Primes::Iterator::operator++() noexcept {
+  ++pos_;
+  return *this;
+}
+
+Primes::Iterator Primes::Iterator::operator++(int) const noexcept {
+  Iterator tmp(*this);
+  ++tmp.pos_;
+  return tmp;
+}
+
+Primes::Iterator &Primes::Iterator::operator--() noexcept {
+  --pos_;
+  return *this;
+}
+
+Primes::Iterator Primes::Iterator::operator--(int) const noexcept {
+  Iterator tmp(*this);
+  --tmp.pos_;
+  return tmp;
+}
+
+uint32_t Primes::Iterator::operator*() const {
+  return end_it_ ? 0 : owner_->operator[](pos_);
+}
