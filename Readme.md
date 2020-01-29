@@ -1,16 +1,16 @@
 # Primes
 
 ## Using
--h --help 				    to see context below
+```-h --help 				    to see context below
 -n --amount     [amount_of_primes]          to set up amount of printing primes
 -m --max_number [max_number]                to set up max prime
 -f --file       [file_name]                 to redirect primes output to "file_name"
 -o --option     [all|super_simple|mersenne] to set up special prime's type
--s --stat       [file_name]                 to print additional info to "file_name"
+-s --stat       [file_name]                 to print additional info to "file_name"```
 
 ## Examples
-`./primes-cli` primes less than 100 to console
-`./prime-cli --help` help window
+`./primes-cli` primes less than 100 to console\
+`./prime-cli --help` help window\
 `./primes-cli -f out -s stat -n 1000 -o super_simple` 1000 first super simple primes to file "out" and log to file "stat"
 
 ## Tests
