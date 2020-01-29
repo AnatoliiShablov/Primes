@@ -219,6 +219,7 @@ int main(int argc, char *argv[]) {
   } else {
     std::for_each(primes_only.begin(), primes_only.end(),
                   [](uint32_t prime) { std::cout << prime << ' '; });
+    std::cout << std::endl;
   }
 
   Primes mem_check;
